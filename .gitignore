@@ -30,3 +30,9 @@ dist-ssr
 
 # Build artifacts
 .cache/
+
+# Test coverage
+coverage/
+
+# Server runtime files
+server/logs/

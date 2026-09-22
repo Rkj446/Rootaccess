@@ -160,7 +160,6 @@ The frontend is structured to seamlessly integrate with a Node.js/Express/MongoD
 4. Components require no changes - they consume data the same way
 
 ### Future Phases:
-- Phase 2: Node.js/Express backend
 - Phase 3: MongoDB database
 - Phase 4: CSV import functionality
 - Phase 5: Real student/teacher/class management
@@ -241,3 +240,36 @@ Phase 1 - Educational/Prototype Use
 ---
 
 **Built with ❤️ for modern education analytics**
+
+## Phase 2 Backend Foundation
+
+Phase 2 adds a production-oriented Express API foundation without changing the
+mock-auth dashboards. The server includes MongoDB connection state, health and
+root endpoints, centralized error/404 handling, security middleware, a
+bcrypt-backed `User` model, JWT helpers, role middleware, and authentication
+routes:
+
+- `GET /` - API metadata
+- `GET /api/health` - API and MongoDB connection state
+- `POST /api/auth/register` - create a user
+- `POST /api/auth/login` - issue a JWT
+- `GET /api/auth/me` - current user (`Bearer` token required)
+
+### Backend setup
+
+```bash
+cp .env.example .env
+# Set MONGODB_URI and a long, random JWT_SECRET in .env
+npm run server
+```
+
+`REQUIRE_DATABASE=true` (the default) makes startup fail when MongoDB is
+missing or unreachable. For an intentional API-only/local health smoke test,
+set `REQUIRE_DATABASE=false`; the health response will still report the
+database's actual `connected`, `disconnected`, `connecting`, or
+`disconnecting` state. The API listens on port `5000` by default. Use `npm run server:dev` for
+Node's watch mode. Set `VITE_API_URL` (default:
+`http://localhost:5000/api`) when connecting the frontend. The centralized
+Axios client and `healthCheck()` helper live in `src/services/api.js`; existing
+mock data and authentication remain the default UI behavior until a later
+integration phase.
