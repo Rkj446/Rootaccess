@@ -24,6 +24,7 @@ import AdminClasses from './pages/AdminClasses';
 import AdminSubjects from './pages/AdminSubjects';
 import AdminAnalytics from './pages/AdminAnalytics';
 import AdminSettings from './pages/AdminSettings';
+import AdminImport from './pages/AdminImport';
 
 function App() {
   return (
@@ -181,6 +182,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/admin/import" element={<ProtectedRoute requiredRole={ROLES.ADMIN}><AdminImport /></ProtectedRoute>} />
 
         {/* Catch all */}
         <Route path="*" element={<Navigate to="/" replace />} />

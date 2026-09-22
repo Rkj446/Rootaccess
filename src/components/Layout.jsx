@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, LogOut, User, Bell, GraduationCap } from 'lucide-react';
-import { authService } from '../utils/auth';
+import { useAuth } from '../context/AuthContext';
 
 const StudentSidebarLinks = [
   { label: 'Dashboard', href: '/student/dashboard', icon: '📊' },
@@ -28,6 +28,7 @@ const AdminSidebarLinks = [
   { label: 'Subjects', href: '/admin/subjects', icon: '📖' },
   { label: 'Analytics', href: '/admin/analytics', icon: '📈' },
   { label: 'Settings', href: '/admin/settings', icon: '⚙️' },
+  { label: 'Import Students', href: '/admin/import', icon: '📥' },
 ];
 
 function Sidebar({ isOpen, onClose, links }) {
@@ -89,11 +90,11 @@ function Sidebar({ isOpen, onClose, links }) {
 
 function Header({ onMenuClick }) {
   const navigate = useNavigate();
-  const user = authService.getCurrentUser();
+  const { user, logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleLogout = () => {
-    authService.logout();
+    logout();
     navigate('/');
   };
 

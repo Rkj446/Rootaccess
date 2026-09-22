@@ -1,0 +1,15 @@
+import { useState } from 'react';
+import { Layout } from '../components/Layout';
+import api from '../services/api';
+
+export default function AdminImport() {
+  const [file, setFile] = useState(null); const [preview, setPreview] = useState(null); const [message, setMessage] = useState(''); const [loading, setLoading] = useState(false);
+  const clear = () => { setFile(null); setPreview(null); setMessage(''); };
+  const validate = async () => {
+    if (!file) return setMessage('Choose a CSV file first.');
+    setLoading(true); setMessage('');
+    try { const data = new FormData(); data.append('file', file); const response = await api.post('/imports/preview', data, { headers: { 'Content-Type': 'multipart/form-data' } }); setPreview(response.data.data); } catch (error) { setMessage(error.response?.data?.message || 'Preview failed.'); } finally { setLoading(false); }
+  };
+  const confirm = async () => { setLoading(true); try { const { data } = await api.post('/imports/confirm', { token: preview.token }); setMessage(`Imported ${data.data.imported} students. Skipped ${data.data.duplicates || 0}.`); setPreview(null); setFile(null); } catch (error) { setMessage(error.response?.data?.message || 'Import failed.'); } finally { setLoading(false); } };
+  return <Layout role="ADMIN"><div className="p-6 space-y-6"><div><h1 className="text-3xl font-bold text-gray-900">Import Students</h1><p className="text-gray-600 mt-1">Validate a CSV before importing student records.</p></div><div className="card p-6 space-y-4"><label className="block border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer" onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); setFile(e.dataTransfer.files?.[0]); }}><span className="text-gray-600">{file ? file.name : 'Drag and drop a CSV here, or click to browse'}</span><input type="file" accept=".csv,text/csv" onChange={(e) => setFile(e.target.files?.[0])} className="hidden" /></label><div className="flex gap-3"><button onClick={validate} disabled={loading} className="btn-primary">{loading ? 'Working…' : 'Validate & Preview'}</button>{file && <button onClick={clear} disabled={loading} className="btn-outline">Remove</button>}</div>{message && <p className="text-sm text-gray-700">{message}</p>}</div>{preview && <div className="card p-6 space-y-4"><h2 className="text-xl font-semibold">Preview</h2><div className="grid grid-cols-4 gap-4 text-center"><div><b>{preview.totalRows}</b><p>Total rows</p></div><div><b className="text-green-600">{preview.validRows}</b><p>Valid</p></div><div><b className="text-red-600">{preview.invalidRows}</b><p>Invalid</p></div><div><b className="text-amber-600">{preview.duplicates || 0}</b><p>Duplicates</p></div></div>{preview.errors.length > 0 && <div className="bg-red-50 p-4 text-sm">{preview.errors.slice(0, 10).map((e) => <p key={e.row}>Row {e.row}: {e.errors.join(', ')}</p>)}</div>}<div className="flex gap-3"><button onClick={confirm} disabled={loading || preview.validRows === 0} className="btn-primary">Confirm Import</button><button onClick={clear} disabled={loading} className="btn-outline">Cancel</button></div></div>}</div></Layout>;
+}

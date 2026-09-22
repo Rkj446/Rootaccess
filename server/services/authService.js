@@ -1,7 +1,7 @@
 import User from '../models/User.js';
 import { signToken } from '../utils/jwt.js';
 
-const publicUser = (user) => ({ id: user._id, name: user.name, email: user.email, role: user.role });
+export const publicUser = (user) => ({ id: user._id.toString(), name: user.name, email: user.email, role: user.role, status: user.status, studentId: user.studentId || null });
 
 export const register = async ({ name, email, password }) => {
   const normalizedEmail = email.trim().toLowerCase();
@@ -13,6 +13,7 @@ export const register = async ({ name, email, password }) => {
 
 export const login = async ({ email, password }) => {
   const user = await User.findOne({ email: email.trim().toLowerCase() }).select('+password');
+  if (user && user.status !== 'ACTIVE') throw Object.assign(new Error('Account is inactive'), { statusCode: 403 });
   if (!user || !(await user.comparePassword(password))) {
     throw Object.assign(new Error('Invalid email or password'), { statusCode: 401 });
   }

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GraduationCap, Lock, Mail, AlertCircle } from 'lucide-react';
-import { validateCredentials } from '../data/mockUsers';
-import { authService, getDefaultRoute } from '../utils/auth';
+import { getDefaultRoute } from '../utils/auth';
+import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -11,25 +11,20 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    const result = validateCredentials(email, password);
-
-    if (result.success) {
-      authService.login(result.user);
-      const defaultRoute = getDefaultRoute(result.user.role);
+    try {
+      const user = await login(email, password);
+      const defaultRoute = getDefaultRoute(user.role);
       navigate(defaultRoute);
-    } else {
-      setError('Invalid email or password');
+    } catch (requestError) {
+      setError(requestError.response?.data?.message || 'Unable to sign in');
     }
-
     setLoading(false);
   };
 

@@ -1,4 +1,4 @@
-# Student Performance Management System - Phase 1
+# Student Performance Management System - Phases 1–4
 
 A polished, production-ready frontend prototype for a Student Performance Management System built with React, Vite, Tailwind CSS, and Recharts.
 
@@ -51,6 +51,9 @@ cd student-performance-system
 # Install dependencies
 npm install
 
+# configure MongoDB/JWT (copy .env.example to .env)
+npm run seed
+
 # Start development server
 npm run dev
 ```
@@ -87,6 +90,12 @@ Password: admin123
 ```
 
 Use the quick-fill buttons on the login page to easily switch between roles.
+
+The application now uses HttpOnly JWT cookies for login, `/api/auth/me`, and logout.
+Admin users can validate and confirm CSV imports at **Admin → Import Students**.
+Student records are stored in MongoDB and exposed through authorized `/api/students`
+list and aggregate summary endpoints. Set `REQUIRE_DATABASE=false` only for API
+smoke tests that do not access persisted data.
 
 ## 📁 Project Structure
 
