@@ -9,6 +9,5 @@ export const errorHandler = (error, req, res, next) => {
     success: false,
     message: status === 500 ? 'Internal server error' : error.message,
     data: null,
-    ...(process.env.NODE_ENV !== 'production' && { stack: error.stack }),
   });
 };

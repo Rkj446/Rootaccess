@@ -12,4 +12,10 @@ export const env = {
   cookieName: process.env.AUTH_COOKIE_NAME || 'student_performance_token',
   cookieSecure: process.env.COOKIE_SECURE === 'true',
   requireDatabase: process.env.REQUIRE_DATABASE !== 'false',
+  emailFrom: process.env.EMAIL_FROM || 'noreply@localhost',
+  smtpHost: process.env.SMTP_HOST || '',
+  smtpPort: Number(process.env.SMTP_PORT) || 587,
+  smtpSecure: String(process.env.SMTP_SECURE || 'false') === 'true',
+  smtpUser: process.env.SMTP_USER || '',
+  smtpPass: process.env.SMTP_PASS || '',
 };

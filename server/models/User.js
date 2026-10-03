@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema(
     role: { type: String, enum: ['STUDENT', 'TEACHER', 'ADMIN'], default: 'STUDENT' },
     studentId: { type: String, sparse: true, index: true },
     status: { type: String, enum: ['ACTIVE', 'INACTIVE'], default: 'ACTIVE' },
+    passwordChangedAt: { type: Date },
   },
   { timestamps: true },
 );
@@ -16,6 +17,7 @@ const userSchema = new mongoose.Schema(
 userSchema.pre('save', async function hashPassword() {
   if (!this.isModified('password')) return;
   this.password = await bcrypt.hash(this.password, 12);
+  this.passwordChangedAt = new Date();
 });
 
 userSchema.methods.comparePassword = function comparePassword(candidate) {

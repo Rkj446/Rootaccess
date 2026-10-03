@@ -31,6 +31,57 @@ export const login = async (req, res, next) => {
 };
 
 export const me = (req, res) => res.json({ success: true, message: 'Authenticated user', data: { user: authService.publicUser(req.user) } });
+export const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email || !String(email).trim()) {
+      return res.status(400).json({ success: false, message: 'An email address is required', data: null });
+    }
+
+    const result = await authService.requestPasswordReset({
+      email,
+      ipAddress: req.ip,
+      userAgent: req.headers['user-agent'] || '',
+    });
+
+    return res.json({
+      success: true,
+      message: result.message,
+      data: result.devOtp ? { otp: result.devOtp } : null,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const verifyOTP = async (req, res, next) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+      return res.status(400).json({ success: false, message: 'Email and OTP are required', data: null });
+    }
+
+    const result = await authService.verifyPasswordResetOTP({ email, otp });
+    res.json({ success: true, message: 'Verification code accepted', data: result });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resetPassword = async (req, res, next) => {
+  try {
+    const { email, otp, password } = req.body;
+    if (!email || !otp || !password) {
+      return res.status(400).json({ success: false, message: 'Email, OTP, and new password are required', data: null });
+    }
+
+    const result = await authService.resetPasswordWithOTP({ email, otp, password });
+    res.json({ success: true, message: result.message, data: null });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const logout = (req, res) => {
   res.setHeader('Set-Cookie', `${env.cookieName}=; HttpOnly; SameSite=Lax; Max-Age=0; Path=/`);
   res.json({ success: true, message: 'Logged out', data: null });

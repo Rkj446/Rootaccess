@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
+.vite/
 
 # Editor directories and files
 .vscode/*
@@ -26,13 +27,32 @@ dist-ssr
 # Environment variables
 .env
 .env.local
-.env.*.local
+.env.*
+!.env.example
 
 # Build artifacts
 .cache/
 
 # Test coverage
 coverage/
+htmlcov/
+.coverage
+
+# Python environments, caches, and bytecode
+.venv/
+.venv*/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Local browser/session credentials
+cookies.txt
+cookies*.txt
+*.cookie
 
 # Server runtime files
 server/logs/

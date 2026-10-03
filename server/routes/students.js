@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { listStudents, studentSummary, getMyStudent, getStudent, getPerformance, overview, distribution } from '../controllers/studentController.js';
+import { listStudents, studentSummary, getMyStudent, getMyPerformance, getStudent, getPerformance, overview, distribution } from '../controllers/studentController.js';
 import importRoutes from './imports.js';
 import { authorize, protect } from '../middleware/auth.js';
 
@@ -7,6 +7,7 @@ const router = Router();
 router.use(protect);
 router.use('/import', importRoutes);
 router.get('/me', authorize('STUDENT'), getMyStudent);
+router.get('/me/performance', authorize('STUDENT'), getMyPerformance);
 router.get('/stats/overview', authorize('ADMIN', 'TEACHER'), overview);
 router.get('/stats/performance-distribution', authorize('ADMIN', 'TEACHER'), distribution('performanceCategory', 'category'));
 router.get('/stats/risk-distribution', authorize('ADMIN', 'TEACHER'), distribution('riskLevel', 'riskLevel'));

@@ -11,9 +11,13 @@ export const protect = async (req, res, next) => {
     }));
     const token = header?.startsWith('Bearer ') ? header.slice(7) : cookies[env.cookieName];
     if (!token) return res.status(401).json({ success: false, message: 'Authentication required', data: null });
+    req.authToken = token;
     const decoded = verifyToken(token);
     req.user = await User.findById(decoded.userId).select('-password');
     if (!req.user) return res.status(401).json({ success: false, message: 'User no longer exists', data: null });
+    if (req.user.passwordChangedAt && decoded.iat && Math.floor(req.user.passwordChangedAt.getTime() / 1000) > decoded.iat) {
+      return res.status(401).json({ success: false, message: 'Session expired due to password change', data: null });
+    }
     if (req.user.status !== 'ACTIVE') return res.status(403).json({ success: false, message: 'Account is inactive', data: null });
     next();
   } catch (error) {

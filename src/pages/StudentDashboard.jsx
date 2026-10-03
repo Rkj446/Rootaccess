@@ -1,16 +1,75 @@
+import { useEffect, useState } from 'react';
 import { Layout } from '../components/Layout';
 import { StatCard, ChartCard, PerformanceBadge, RiskBadge } from '../components/CommonComponents';
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { TrendingUp, Calendar, Download, BookOpen, Clock, AlertCircle, Target } from 'lucide-react';
-import {
-  studentKPIData,
-  academicPerformanceData,
-  performanceTrendData,
-  studentInsights,
-  studentBehaviourData,
-} from '../data/mockAnalytics';
+import api from '../services/api';
 
 export default function StudentDashboard() {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [student, setStudent] = useState(null);
+
+  useEffect(() => {
+    const fetchStudentData = async () => {
+      try {
+        setLoading(true);
+        setError('');
+        const { data } = await api.get('/students/me');
+        setStudent(data.data.student);
+      } catch (err) {
+        setError(err.response?.data?.message || 'Failed to load student data');
+        console.error('Error fetching student data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStudentData();
+  }, []);
+
+  if (loading) {
+    return (
+      <Layout role="STUDENT">
+        <div className="p-6">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <p className="text-gray-600">Loading your dashboard…</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (error || !student) {
+    return (
+      <Layout role="STUDENT">
+        <div className="p-6">
+          <div className="card p-6 text-red-600">
+            <p>{error || 'Unable to load student data'}</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  // Build academic performance chart data from student model fields
+  const academicPerformanceData = [
+    { subject: 'Internal', marks: student.internalMarks ?? 0 },
+    { subject: 'Assignment', marks: student.assignmentAvg ?? 0 },
+    { subject: 'Midterm', marks: student.midtermMarks ?? 0 },
+    { subject: 'Lab', marks: student.labMarks ?? 0 },
+    { subject: 'Final', marks: student.finalScore ?? 0 },
+  ];
+
+  // Build engagement data from student fields
+  const engagementData = [
+    { category: 'Attendance', value: student.attendancePct ?? 0, unit: '%' },
+    { category: 'Study', value: student.studyHoursPerDay ?? 0, unit: 'hrs/day' },
+    { category: 'Sleep', value: student.sleepHoursPerDay ?? 0, unit: 'hrs/day' },
+    { category: 'Participation', value: student.classParticipationPct ?? 0, unit: '%' },
+    { category: 'Backlogs', value: student.backlogs ?? 0, unit: '' },
+  ];
+
   return (
     <Layout role="STUDENT">
       <div className="p-6 space-y-6">
@@ -40,41 +99,39 @@ export default function StudentDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <StatCard
             title="Overall Score"
-            value={`${studentKPIData.overallScore}%`}
+            value={`${(student.finalScore ?? 0).toFixed(1)}%`}
             icon={Target}
             color="primary"
-            trend={{ positive: true, label: '+4.2% from last month' }}
           />
           <StatCard
             title="Final CGPA"
-            value={studentKPIData.finalCGPA}
+            value={((student.finalCgpa ?? 0).toFixed(2))}
             icon={BookOpen}
             color="green"
-            trend={{ positive: true, label: '+0.41 from last semester' }}
           />
           <StatCard
             title="Attendance"
-            value={`${studentKPIData.attendance}%`}
+            value={`${(student.attendancePct ?? 0).toFixed(1)}%`}
             icon={Calendar}
             color="primary"
           />
           <StatCard
             title="Study Hours"
-            value={`${studentKPIData.studyHours} hrs/day`}
+            value={`${(student.studyHoursPerDay ?? 0).toFixed(1)} hrs/day`}
             icon={Clock}
             color="amber"
           />
           <StatCard
             title="Previous CGPA"
-            value={studentKPIData.previousCGPA}
+            value={((student.previousCgpa ?? 0).toFixed(2))}
             icon={TrendingUp}
             color="primary"
           />
           <StatCard
             title="Risk Level"
-            value={studentKPIData.riskLevel}
+            value={student.riskLevel || 'N/A'}
             icon={AlertCircle}
-            color="green"
+            color={student.riskLevel === 'Low' ? 'green' : student.riskLevel === 'Medium' ? 'amber' : 'red'}
           />
         </div>
 
@@ -93,67 +150,39 @@ export default function StudentDashboard() {
             </ResponsiveContainer>
           </ChartCard>
 
-          {/* Performance Trend */}
-          <ChartCard title="Performance Trend">
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={performanceTrendData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis dataKey="week" tick={{ fontSize: 12 }} />
-                <YAxis tick={{ fontSize: 12 }} />
-                <Tooltip />
-                <Line type="monotone" dataKey="score" stroke="#0078d4" strokeWidth={3} dot={{ fill: '#0078d4', r: 5 }} />
-              </LineChart>
-            </ResponsiveContainer>
-          </ChartCard>
-        </div>
-
-        {/* Insights Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Strong Areas */}
-          <ChartCard title="Strong Areas">
-            <div className="space-y-3">
-              {studentInsights.strongAreas.map((area, idx) => (
-                <div key={idx} className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                  <span className="font-medium text-gray-900">{area.subject}</span>
-                  <span className="font-bold text-green-600">{area.score}%</span>
+          {/* Performance & Risk Summary */}
+          <ChartCard title="Performance Summary">
+            <div className="space-y-4">
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <p className="text-sm text-gray-600 mb-1">Performance Category</p>
+                <div className="flex items-center gap-2">
+                  <PerformanceBadge performance={student.performanceCategory || 'Average'} />
+                  <span className="text-sm text-gray-900">{student.performanceCategory || 'Not Assessed'}</span>
                 </div>
-              ))}
-            </div>
-          </ChartCard>
-
-          {/* Needs Attention */}
-          <ChartCard title="Needs Attention">
-            <div className="space-y-3">
-              {studentInsights.needsAttention.map((area, idx) => (
-                <div key={idx} className="flex items-center justify-between p-3 bg-amber-50 rounded-lg">
-                  <span className="font-medium text-gray-900">{area.subject}</span>
-                  <span className="font-bold text-amber-600">{area.score}%</span>
+              </div>
+              <div className="p-4 bg-amber-50 rounded-lg">
+                <p className="text-sm text-gray-600 mb-1">Risk Assessment</p>
+                <div className="flex items-center gap-2">
+                  <RiskBadge risk={student.riskLevel || 'Medium'} />
+                  <span className="text-sm text-gray-900">{student.riskLevel || 'Not Assessed'}</span>
                 </div>
-              ))}
-            </div>
-          </ChartCard>
-
-          {/* Recommended Practice */}
-          <ChartCard title="Recommended Practice">
-            <div className="space-y-3">
-              {studentInsights.recommendedPractice.map((rec, idx) => (
-                <div key={idx} className="p-3 bg-blue-50 rounded-lg">
-                  <p className="font-medium text-gray-900 text-sm">{rec.subject}</p>
-                  <p className="text-xs text-gray-600 mt-1">{rec.topic}</p>
-                </div>
-              ))}
+              </div>
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <p className="text-sm text-gray-600 mb-1">Student ID</p>
+                <p className="text-lg font-semibold text-gray-900">{student.studentId}</p>
+              </div>
             </div>
           </ChartCard>
         </div>
 
-        {/* Behaviour Data */}
+        {/* Behaviour & Engagement Data */}
         <ChartCard title="Behaviour & Engagement">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {studentBehaviourData.map((item, idx) => (
+            {engagementData.map((item, idx) => (
               <div key={idx} className="text-center p-4 bg-gray-50 rounded-lg">
                 <p className="text-sm text-gray-600 mb-2">{item.category}</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {item.value}
+                  {(typeof item.value === 'number' ? item.value.toFixed(1) : item.value)}
                   <span className="text-sm font-normal text-gray-600 ml-1">{item.unit}</span>
                 </p>
               </div>

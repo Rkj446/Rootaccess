@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { GraduationCap, Lock, Mail, AlertCircle } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { GraduationCap, Lock, Mail, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { getDefaultRoute } from '../utils/auth';
 import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -155,13 +156,22 @@ export default function Login() {
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
                     id="password"
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="input pl-11"
+                    className="input pl-11 pr-12"
                     placeholder="Enter your password"
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((visible) => !visible)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    aria-pressed={showPassword}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
                 </div>
               </div>
 
@@ -175,9 +185,9 @@ export default function Login() {
                   />
                   <span className="text-sm text-gray-700">Remember me</span>
                 </label>
-                <a href="#" className="text-sm text-primary-600 hover:text-primary-700 font-medium">
+                <Link to="/forgot-password" className="text-sm text-primary-600 hover:text-primary-700 font-medium">
                   Forgot password?
-                </a>
+                </Link>
               </div>
 
               <button

@@ -1,29 +1,3 @@
-const AUTH_KEY = 'student_performance_auth';
-
-export const authService = {
-  login: (user) => {
-    localStorage.setItem(AUTH_KEY, JSON.stringify(user));
-  },
-
-  logout: () => {
-    localStorage.removeItem(AUTH_KEY);
-  },
-
-  getCurrentUser: () => {
-    const user = localStorage.getItem(AUTH_KEY);
-    return user ? JSON.parse(user) : null;
-  },
-
-  isAuthenticated: () => {
-    return localStorage.getItem(AUTH_KEY) !== null;
-  },
-
-  hasRole: (role) => {
-    const user = authService.getCurrentUser();
-    return user && user.role === role;
-  },
-};
-
 export const ROLES = {
   STUDENT: 'STUDENT',
   TEACHER: 'TEACHER',

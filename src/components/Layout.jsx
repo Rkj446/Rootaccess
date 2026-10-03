@@ -6,8 +6,11 @@ import { useAuth } from '../context/AuthContext';
 const StudentSidebarLinks = [
   { label: 'Dashboard', href: '/student/dashboard', icon: '📊' },
   { label: 'My Performance', href: '/student/performance', icon: '📈' },
+  { label: 'Analytics', href: '/student/analytics', icon: '📊' },
   { label: 'Attendance', href: '/student/attendance', icon: '✓' },
   { label: 'Exam Results', href: '/student/results', icon: '📋' },
+  { label: 'My Class', href: '/student/class', icon: '🏫' },
+  { label: 'My Subjects', href: '/student/subjects', icon: '📚' },
   { label: 'Profile', href: '/student/profile', icon: '👤' },
 ];
 
@@ -17,6 +20,8 @@ const TeacherSidebarLinks = [
   { label: 'Performance Analytics', href: '/teacher/analytics', icon: '📈' },
   { label: 'Attendance', href: '/teacher/attendance', icon: '✓' },
   { label: 'Reports', href: '/teacher/reports', icon: '📋' },
+  { label: 'Classes', href: '/teacher/classes', icon: '🏫' },
+  { label: 'Subjects', href: '/teacher/subjects', icon: '📚' },
   { label: 'Profile', href: '/teacher/profile', icon: '👤' },
 ];
 
@@ -26,8 +31,9 @@ const AdminSidebarLinks = [
   { label: 'Teachers', href: '/admin/teachers', icon: '🏫' },
   { label: 'Classes', href: '/admin/classes', icon: '📚' },
   { label: 'Subjects', href: '/admin/subjects', icon: '📖' },
+  { label: 'Assignments', href: '/admin/assignments', icon: '🔗' },
   { label: 'Analytics', href: '/admin/analytics', icon: '📈' },
-  { label: 'Settings', href: '/admin/settings', icon: '⚙️' },
+  { label: 'ML', href: '/admin/ml', icon: '🤖' },
   { label: 'Import Students', href: '/admin/import', icon: '📥' },
 ];
 
