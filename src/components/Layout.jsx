@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, LogOut, User, Bell, GraduationCap } from 'lucide-react';
+import { Menu, LogOut, User, Bell } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import Avatar from './Avatar';
+import rootaccessLogo from '../assets/Rootaccess_logo.jpeg';
 
 const StudentSidebarLinks = [
   { label: 'Dashboard', href: '/student/dashboard', icon: '📊' },
@@ -11,7 +13,7 @@ const StudentSidebarLinks = [
   { label: 'Exam Results', href: '/student/results', icon: '📋' },
   { label: 'My Class', href: '/student/class', icon: '🏫' },
   { label: 'My Subjects', href: '/student/subjects', icon: '📚' },
-  { label: 'Profile', href: '/student/profile', icon: '👤' },
+  { label: 'Profile', href: '/profile', icon: '👤' },
 ];
 
 const TeacherSidebarLinks = [
@@ -22,7 +24,7 @@ const TeacherSidebarLinks = [
   { label: 'Reports', href: '/teacher/reports', icon: '📋' },
   { label: 'Classes', href: '/teacher/classes', icon: '🏫' },
   { label: 'Subjects', href: '/teacher/subjects', icon: '📚' },
-  { label: 'Profile', href: '/teacher/profile', icon: '👤' },
+  { label: 'Profile', href: '/profile', icon: '👤' },
 ];
 
 const AdminSidebarLinks = [
@@ -35,6 +37,7 @@ const AdminSidebarLinks = [
   { label: 'Analytics', href: '/admin/analytics', icon: '📈' },
   { label: 'ML', href: '/admin/ml', icon: '🤖' },
   { label: 'Import Students', href: '/admin/import', icon: '📥' },
+  { label: 'Profile', href: '/profile', icon: '👤' },
 ];
 
 function Sidebar({ isOpen, onClose, links }) {
@@ -58,10 +61,11 @@ function Sidebar({ isOpen, onClose, links }) {
       >
         <div className="p-6 border-b border-gray-200">
           <Link to="/" className="flex items-center gap-3">
-            <div className="bg-primary-100 p-2 rounded-lg">
-              <GraduationCap className="w-6 h-6 text-primary-600" />
-            </div>
-            <span className="font-bold text-lg text-gray-900">EduTrack</span>
+            <img src={rootaccessLogo} alt="Rootaccess logo" className="h-10 w-16 rounded-lg object-cover" />
+            <span className="min-w-0">
+              <span className="block truncate text-lg font-bold leading-tight text-gray-900">EduTrack</span>
+              <span className="block text-xs leading-tight text-gray-500">by Rootaccess</span>
+            </span>
           </Link>
         </div>
 
@@ -98,9 +102,27 @@ function Header({ onMenuClick }) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const userMenuRef = useRef(null);
 
-  const handleLogout = () => {
-    logout();
+  useEffect(() => {
+    if (!dropdownOpen) return undefined;
+    const handleOutsideClick = (event) => {
+      if (!userMenuRef.current?.contains(event.target)) setDropdownOpen(false);
+    };
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') setDropdownOpen(false);
+    };
+    document.addEventListener('pointerdown', handleOutsideClick);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', handleOutsideClick);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [dropdownOpen]);
+
+  const handleLogout = async () => {
+    setDropdownOpen(false);
+    await logout();
     navigate('/');
   };
 
@@ -126,16 +148,16 @@ function Header({ onMenuClick }) {
           </button>
 
           {/* User Menu */}
-          <div className="relative">
+          <div className="relative" ref={userMenuRef}>
             <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
+              type="button"
+              onClick={() => setDropdownOpen((open) => !open)}
+              aria-expanded={dropdownOpen}
+              aria-haspopup="menu"
+              aria-label="Open profile menu"
               className="flex items-center gap-3 p-2 hover:bg-gray-100 rounded-lg"
             >
-              <img
-                src={user?.avatar}
-                alt={user?.name}
-                className="w-8 h-8 rounded-full"
-              />
+              <Avatar user={user} />
               <div className="hidden sm:block text-left">
                 <p className="text-sm font-medium text-gray-900">{user?.name}</p>
                 <p className="text-xs text-gray-500">{user?.role}</p>
@@ -143,13 +165,25 @@ function Header({ onMenuClick }) {
             </button>
 
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                <button className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+              <div role="menu" className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                <div className="px-4 py-2 border-b border-gray-100">
+                  <p className="truncate text-sm font-semibold text-gray-900">{user?.name}</p>
+                  <p className="truncate text-xs text-gray-500">{user?.email}</p>
+                  <p className="mt-1 text-xs text-gray-500">{user?.role}</p>
+                </div>
+                <Link
+                  to="/profile"
+                  role="menuitem"
+                  onClick={() => setDropdownOpen(false)}
+                  className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                >
                   <User className="w-4 h-4" />
                   Profile Settings
-                </button>
+                </Link>
                 <hr className="my-2" />
                 <button
+                  type="button"
+                  role="menuitem"
                   onClick={handleLogout}
                   className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                 >

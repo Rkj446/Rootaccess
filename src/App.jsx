@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import ProtectedRoute from './components/ProtectedRoute';
 import { ROLES } from './utils/auth';
 
@@ -24,6 +25,7 @@ import TeacherSubjects from './pages/TeacherSubjects';
 import TeacherProfile from './pages/TeacherProfile';
 
 import AdminDashboard from './pages/AdminDashboard';
+import AdminProfile from './pages/AdminProfile';
 import AdminStudents from './pages/AdminStudents';
 import AdminTeachers from './pages/AdminTeachers';
 import AdminClasses from './pages/AdminClasses';
@@ -32,14 +34,60 @@ import AdminAssignments from './pages/AdminAssignments';
 import AdminAnalytics from './pages/AdminAnalytics';
 import AdminML from './pages/AdminML';
 import AdminImport from './pages/AdminImport';
+import ProfileSettings from './pages/ProfileSettings';
+
+const pageTitles = {
+  '/': 'Login',
+  '/forgot-password': 'Password Recovery',
+  '/profile': 'Profile',
+  '/student/dashboard': 'Student Dashboard',
+  '/student/performance': 'Student Performance',
+  '/student/attendance': 'Student Attendance',
+  '/student/results': 'Exam Results',
+  '/student/profile': 'Profile',
+  '/student/class': 'My Class',
+  '/student/subjects': 'My Subjects',
+  '/student/analytics': 'Student Analytics',
+  '/teacher/dashboard': 'Teacher Dashboard',
+  '/teacher/students': 'Teacher Students',
+  '/teacher/analytics': 'Teacher Analytics',
+  '/teacher/attendance': 'Teacher Attendance',
+  '/teacher/reports': 'Teacher Reports',
+  '/teacher/classes': 'Teacher Classes',
+  '/teacher/subjects': 'Teacher Subjects',
+  '/teacher/profile': 'Profile',
+  '/admin/dashboard': 'Admin Dashboard',
+  '/admin/profile': 'Profile',
+  '/admin/students': 'Admin Students',
+  '/admin/teachers': 'Admin Teachers',
+  '/admin/classes': 'Admin Classes',
+  '/admin/subjects': 'Admin Subjects',
+  '/admin/assignments': 'Admin Assignments',
+  '/admin/analytics': 'Admin Analytics',
+  '/admin/ml': 'Admin ML',
+  '/admin/import': 'Import Students',
+};
+
+function PageTitle() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    const pageTitle = pageTitles[pathname] || 'Not Found';
+    document.title = `EduTrack by Rootaccess — ${pageTitle}`;
+  }, [pathname]);
+
+  return null;
+}
 
 function App() {
   return (
     <Router>
+      <PageTitle />
       <Routes>
         {/* Login */}
         <Route path="/" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/profile" element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
 
         {/* Student Routes */}
         <Route
@@ -181,6 +229,14 @@ function App() {
           element={
             <ProtectedRoute requiredRole={ROLES.ADMIN}>
               <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/profile"
+          element={
+            <ProtectedRoute requiredRole={ROLES.ADMIN}>
+              <AdminProfile />
             </ProtectedRoute>
           }
         />

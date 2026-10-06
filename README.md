@@ -1,6 +1,8 @@
-# Student Performance Management System - Phases 1–4
+# EduTrack by Rootaccess
 
-A polished, production-ready frontend prototype for a Student Performance Management System built with React, Vite, Tailwind CSS, and Recharts.
+Student Performance and Academic Analytics Platform.
+
+A full-stack student performance management platform built with React, Vite, Node.js, Express, and MongoDB.
 
 ## 🎯 Features
 
@@ -51,7 +53,11 @@ cd student-performance-system
 # Install dependencies
 npm install
 
-# configure MongoDB/JWT (copy .env.example to .env)
+# configure MongoDB/JWT and admin bootstrap values (copy .env.example to .env)
+# then create the initial admin account once
+npm run bootstrap:admin
+
+# seed demo student and teacher users
 npm run seed
 
 # Start development server
@@ -69,7 +75,7 @@ npm run preview
 
 ## 🔐 Demo Accounts
 
-Three demo accounts are pre-configured for testing:
+Student and teacher demo accounts are available for quick testing. The admin account is created once through the environment-based bootstrap flow and is not exposed as a demo login.
 
 ### Student Account
 ```
@@ -83,19 +89,41 @@ Email: teacher@example.com
 Password: teacher123
 ```
 
-### Admin Account
-```
-Email: admin@example.com
-Password: admin123
-```
+Use the quick-fill buttons on the login page to easily switch between the demo student and teacher roles.
 
-Use the quick-fill buttons on the login page to easily switch between roles.
-
-The application now uses HttpOnly JWT cookies for login, `/api/auth/me`, and logout.
+The application uses HttpOnly JWT cookies for login, `/api/auth/me`, and logout.
 Admin users can validate and confirm CSV imports at **Admin → Import Students**.
 Student records are stored in MongoDB and exposed through authorized `/api/students`
 list and aggregate summary endpoints. Set `REQUIRE_DATABASE=false` only for API
 smoke tests that do not access persisted data.
+
+### Initial Admin Bootstrap
+
+Set these values in `.env` before the first admin login:
+
+```bash
+INITIAL_ADMIN_EMAIL=admin@yourdomain.com
+INITIAL_ADMIN_PASSWORD=your-strong-initial-password
+```
+
+Then run:
+
+```bash
+npm run bootstrap:admin
+```
+
+This creates exactly one active admin when none exists. It does not overwrite an existing admin password.
+
+To replace the login for the existing admin, set `INITIAL_ADMIN_EMAIL` and a fresh,
+12-character-or-longer `INITIAL_ADMIN_PASSWORD` in `.env`, then run:
+
+```bash
+npm run replace:admin -- --replace-existing
+```
+
+This updates the sole admin account in place, preserving its database identity and
+invalidating existing sessions. It refuses to proceed if multiple admin accounts
+exist or the target email belongs to a non-admin account.
 
 ## 📁 Project Structure
 
@@ -211,6 +239,32 @@ The application is fully responsive:
 - Pagination (10 items per page)
 - Responsive horizontal scrolling on mobile
 - Status badges with color coding
+
+## 🧭 Phase Tracking
+
+- Phase 3: Authentication + RBAC
+- Phase 8: Machine Learning
+- Phase 8.5: Authentication Security & Password Management
+  - Forgot Password
+  - Gmail OTP
+  - OTP verification
+  - Password reset
+  - Change Password
+  - Current password verification
+  - bcrypt password updates
+  - passwordChangedAt
+  - session/token invalidation
+  - one-time initial admin bootstrap
+  - single active admin policy
+  - demo admin removal
+  - student change password
+  - teacher change password
+  - admin change password
+  - canonical `/profile` settings route for all roles
+  - role-specific local avatar defaults
+  - authenticated JPEG/PNG/WebP profile photo upload and removal (5 MB maximum)
+  - profile dropdown with account details, settings navigation, outside-click close, and logout
+- Phase 9: NOT STARTED
 
 ## 🎯 Next Steps
 

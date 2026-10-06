@@ -1,5 +1,5 @@
 # PHASE 5 + PHASE 6 IMPLEMENTATION REPORT
-## Student Performance Management System - Rootaccess
+## EduTrack by Rootaccess
 
 Implementation Date: 2026-09-30
 

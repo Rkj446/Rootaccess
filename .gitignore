@@ -56,3 +56,4 @@ cookies*.txt
 
 # Server runtime files
 server/logs/
+server/uploads/

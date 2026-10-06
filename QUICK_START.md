@@ -1,4 +1,4 @@
-# Quick Start Guide - Student Performance Management System
+# Quick Start Guide - EduTrack by Rootaccess
 
 ## 🎯 Current Status
 ✅ **Application is RUNNING** at http://localhost:5173
@@ -12,8 +12,23 @@ Visit: **http://localhost:5173**
 ```
 STUDENT:  student@example.com  /  student123
 TEACHER:  teacher@example.com  /  teacher123
-ADMIN:    admin@example.com    /  admin123
 ```
+
+### Initial Admin Bootstrap
+Create the real administrator once with environment values and the dedicated command:
+
+```bash
+INITIAL_ADMIN_EMAIL=admin@yourdomain.com
+INITIAL_ADMIN_PASSWORD=your-strong-bootstrap-password
+npm run bootstrap:admin
+```
+
+The admin bootstrap does not overwrite an existing admin password.
+
+To change the existing admin login, set `INITIAL_ADMIN_EMAIL` and a fresh
+12-character-or-longer `INITIAL_ADMIN_PASSWORD` in `.env`, then run
+`npm run replace:admin -- --replace-existing`. This updates the admin in place and
+refuses to proceed if the account selection is ambiguous.
 
 ---
 
@@ -222,4 +237,4 @@ Protected routes auto-redirect if unauthorized.
 
 The application is ready to use. Start by logging in with any demo account and exploring the dashboards.
 
-**Enjoy the Student Performance Management System! 🎓**
+**Enjoy EduTrack by Rootaccess! 🎓**

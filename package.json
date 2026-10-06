@@ -8,6 +8,8 @@
     "server": "node server/index.js",
     "server:dev": "node --watch server/index.js",
     "seed": "node server/scripts/seed.js",
+    "bootstrap:admin": "node server/scripts/bootstrapAdmin.js",
+    "replace:admin": "node server/scripts/replaceAdmin.js",
     "build": "vite build",
     "lint": "oxlint src",
     "lint:server": "oxlint server",

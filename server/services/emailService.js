@@ -8,7 +8,7 @@ export const sendPasswordResetOTPEmail = async ({ email, otp, name }) => {
 
   if (!smtpHost || !smtpUser || !smtpPass) {
     if (isDevFallback || process.env.NODE_ENV !== 'production') {
-      console.info(`[password-reset] Development fallback OTP for ${email}${name ? ` (${name})` : ''}: ${otp}`);
+      console.info(`[password-reset] Development fallback OTP delivery queued for ${email}${name ? ` (${name})` : ''}.`);
       return { delivered: false, reason: 'smtp_not_configured', devOtp: otp };
     }
 

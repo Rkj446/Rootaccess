@@ -18,4 +18,6 @@ export const env = {
   smtpSecure: String(process.env.SMTP_SECURE || 'false') === 'true',
   smtpUser: process.env.SMTP_USER || '',
   smtpPass: process.env.SMTP_PASS || '',
+  initialAdminEmail: String(process.env.INITIAL_ADMIN_EMAIL || '').trim().toLowerCase(),
+  initialAdminPassword: process.env.INITIAL_ADMIN_PASSWORD || '',
 };

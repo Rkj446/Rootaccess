@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema(
     role: { type: String, enum: ['STUDENT', 'TEACHER', 'ADMIN'], default: 'STUDENT' },
     studentId: { type: String, sparse: true, index: true },
     status: { type: String, enum: ['ACTIVE', 'INACTIVE'], default: 'ACTIVE' },
+    profileImage: { type: String, default: null },
     passwordChangedAt: { type: Date },
   },
   { timestamps: true },

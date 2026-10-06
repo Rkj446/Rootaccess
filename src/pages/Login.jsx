@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { GraduationCap, Lock, Mail, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { Lock, Mail, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { getDefaultRoute } from '../utils/auth';
 import { useAuth } from '../context/AuthContext';
+import rootaccessLogo from '../assets/Rootaccess_logo.jpeg';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -39,9 +40,7 @@ export default function Login() {
         setEmail('teacher@example.com');
         setPassword('teacher123');
         break;
-      case 'admin':
-        setEmail('admin@example.com');
-        setPassword('admin123');
+      default:
         break;
     }
   };
@@ -57,15 +56,14 @@ export default function Login() {
 
         <div className="relative z-10 text-white max-w-md">
           <div className="flex items-center gap-3 mb-8">
-            <div className="bg-white p-3 rounded-xl">
-              <GraduationCap className="w-10 h-10 text-primary-600" />
+            <img src={rootaccessLogo} alt="Rootaccess logo" className="h-14 w-24 rounded-xl object-cover" />
+            <div>
+              <h1 className="text-3xl font-bold leading-tight">EduTrack</h1>
+              <p className="text-sm text-primary-100">by Rootaccess</p>
             </div>
-            <h1 className="text-3xl font-bold">EduTrack</h1>
           </div>
 
-          <h2 className="text-4xl font-bold mb-4">
-            Student Performance Management System
-          </h2>
+          <h2 className="text-4xl font-bold mb-4">Student Performance &amp; Academic Analytics</h2>
           <p className="text-lg text-primary-100 mb-8">
             Track, analyze, and improve student performance with comprehensive analytics and insights.
           </p>
@@ -115,8 +113,12 @@ export default function Login() {
         <div className="w-full max-w-md">
           <div className="bg-white rounded-2xl shadow-lg p-8">
             <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-xl mb-4 lg:hidden">
-                <GraduationCap className="w-8 h-8 text-primary-600" />
+              <div className="mb-5 flex items-center justify-center gap-3 lg:hidden">
+                <img src={rootaccessLogo} alt="Rootaccess logo" className="h-12 w-20 rounded-lg object-cover" />
+                <div className="text-left">
+                  <p className="text-xl font-bold leading-tight text-gray-900">EduTrack</p>
+                  <p className="text-xs text-gray-500">by Rootaccess</p>
+                </div>
               </div>
               <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
               <p className="text-gray-600">Sign in to access your dashboard</p>
@@ -201,7 +203,7 @@ export default function Login() {
 
             <div className="mt-8 pt-6 border-t border-gray-200">
               <p className="text-xs text-gray-500 text-center mb-3">Demo Accounts</p>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
                   onClick={() => fillDemoCredentials('student')}
@@ -216,19 +218,12 @@ export default function Login() {
                 >
                   Teacher
                 </button>
-                <button
-                  type="button"
-                  onClick={() => fillDemoCredentials('admin')}
-                  className="btn-secondary text-xs py-2"
-                >
-                  Admin
-                </button>
               </div>
             </div>
           </div>
 
           <p className="text-center text-sm text-gray-500 mt-6">
-            © 2026 EduTrack. All rights reserved.
+            © {new Date().getFullYear()} EduTrack by Rootaccess. All rights reserved.
           </p>
         </div>
       </div>

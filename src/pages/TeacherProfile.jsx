@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Layout } from '../components/Layout';
+import ChangePasswordForm from '../components/ChangePasswordForm';
+import ProfilePhotoSection from '../components/ProfilePhotoSection';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 
@@ -32,27 +34,32 @@ export default function TeacherProfile() {
           <p className="text-gray-600 mt-2">Teaching account overview</p>
         </div>
 
+        <ProfilePhotoSection />
         {loading && <div className="card p-6 text-gray-600">Loading profile…</div>}
         {error && <div className="card p-6 text-red-600">{error}</div>}
 
         {!loading && user && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="card p-6">
-              <p className="text-sm text-gray-500">Teacher name</p>
-              <p className="mt-2 text-2xl font-bold text-gray-900">{user.name}</p>
+          <div className="grid grid-cols-1 xl:grid-cols-[1.3fr_0.7fr] gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="card p-6">
+                <p className="text-sm text-gray-500">Teacher name</p>
+                <p className="mt-2 text-2xl font-bold text-gray-900">{user.name}</p>
+              </div>
+              <div className="card p-6">
+                <p className="text-sm text-gray-500">Email</p>
+                <p className="mt-2 text-2xl font-bold text-gray-900">{user.email}</p>
+              </div>
+              <div className="card p-6">
+                <p className="text-sm text-gray-500">Role</p>
+                <p className="mt-2 text-2xl font-bold text-gray-900">{user.role}</p>
+              </div>
+              <div className="card p-6">
+                <p className="text-sm text-gray-500">Account status</p>
+                <p className="mt-2 text-2xl font-bold text-gray-900">{user.status}</p>
+              </div>
             </div>
-            <div className="card p-6">
-              <p className="text-sm text-gray-500">Email</p>
-              <p className="mt-2 text-2xl font-bold text-gray-900">{user.email}</p>
-            </div>
-            <div className="card p-6">
-              <p className="text-sm text-gray-500">Role</p>
-              <p className="mt-2 text-2xl font-bold text-gray-900">{user.role}</p>
-            </div>
-            <div className="card p-6">
-              <p className="text-sm text-gray-500">Account status</p>
-              <p className="mt-2 text-2xl font-bold text-gray-900">{user.status}</p>
-            </div>
+
+            <ChangePasswordForm />
           </div>
         )}
 

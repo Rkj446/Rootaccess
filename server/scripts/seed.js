@@ -7,7 +7,6 @@ await mongoose.connect(env.mongoUri);
 const users = [
   { name: 'Demo Student', email: 'student@example.com', password: 'student123', role: 'STUDENT', studentId: 'S00001' },
   { name: 'Demo Teacher', email: 'teacher@example.com', password: 'teacher123', role: 'TEACHER' },
-  { name: 'System Admin', email: 'admin@example.com', password: 'admin123', role: 'ADMIN' },
 ];
 for (const details of users) {
   let user = await User.findOne({ email: details.email }).select('+password');

@@ -10,7 +10,7 @@ export const ROUTES = {
     PERFORMANCE: '/student/performance',
     ATTENDANCE: '/student/attendance',
     RESULTS: '/student/results',
-    PROFILE: '/student/profile',
+    PROFILE: '/profile',
   },
   TEACHER: {
     DASHBOARD: '/teacher/dashboard',
@@ -18,7 +18,7 @@ export const ROUTES = {
     ANALYTICS: '/teacher/analytics',
     ATTENDANCE: '/teacher/attendance',
     REPORTS: '/teacher/reports',
-    PROFILE: '/teacher/profile',
+    PROFILE: '/profile',
   },
   ADMIN: {
     DASHBOARD: '/admin/dashboard',
@@ -28,6 +28,7 @@ export const ROUTES = {
     SUBJECTS: '/admin/subjects',
     ANALYTICS: '/admin/analytics',
     SETTINGS: '/admin/settings',
+    PROFILE: '/profile',
   },
 };
 

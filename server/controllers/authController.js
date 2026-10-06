@@ -1,4 +1,5 @@
 import * as authService from '../services/authService.js';
+import * as profileImageService from '../services/profileImageService.js';
 import { env } from '../config/env.js';
 
 const cookieOptions = { httpOnly: true, sameSite: 'lax', secure: env.cookieSecure, maxAge: 7 * 24 * 60 * 60 * 1000, path: '/' };
@@ -31,6 +32,24 @@ export const login = async (req, res, next) => {
 };
 
 export const me = (req, res) => res.json({ success: true, message: 'Authenticated user', data: { user: authService.publicUser(req.user) } });
+export const uploadProfileImage = async (req, res, next) => {
+  try {
+    const user = await profileImageService.updateProfileImage({ userId: req.user._id, file: req.file });
+    return res.json({ success: true, message: 'Profile photo updated', data: { user } });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const removeProfileImage = async (req, res, next) => {
+  try {
+    const user = await profileImageService.removeProfileImage({ userId: req.user._id });
+    return res.json({ success: true, message: 'Profile photo removed', data: { user } });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 export const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
@@ -82,7 +101,28 @@ export const resetPassword = async (req, res, next) => {
   }
 };
 
+export const changePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: 'Authentication required', data: null });
+    }
+
+    const result = await authService.changePassword({
+      userId: req.user._id,
+      currentPassword,
+      newPassword,
+      confirmPassword,
+    });
+
+    res.clearCookie(env.cookieName, { path: '/' });
+    return res.status(200).json({ success: true, message: result.message, data: null });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const logout = (req, res) => {
-  res.setHeader('Set-Cookie', `${env.cookieName}=; HttpOnly; SameSite=Lax; Max-Age=0; Path=/`);
+  res.clearCookie(env.cookieName, { path: '/' });
   res.json({ success: true, message: 'Logged out', data: null });
 };

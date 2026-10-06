@@ -33,6 +33,9 @@ export function AuthProvider({ children }) {
       await api.post('/auth/logout').catch(() => {});
       setUser(null);
     },
+    updateUserProfile(updatedUser) {
+      setUser((currentUser) => currentUser ? { ...currentUser, ...updatedUser } : currentUser);
+    },
   }), [user, loading]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

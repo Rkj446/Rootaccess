@@ -1,4 +1,6 @@
 import express from 'express';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { getDatabaseState } from './config/db.js';
 import authRoutes from './routes/auth.js';
 import studentRoutes from './routes/students.js';
@@ -16,12 +18,24 @@ import { errorHandler, notFound } from './middleware/errors.js';
 import { securityMiddleware } from './middleware/security.js';
 
 const app = express();
+const profileImagesDirectory = path.join(path.dirname(fileURLToPath(import.meta.url)), 'uploads', 'profile-images');
 securityMiddleware(app);
 app.use(express.json({ limit: '1mb' }));
-app.get('/', (req, res) => res.json({ name: 'Student Performance API', status: 'ok' }));
+app.use('/uploads/profile-images', express.static(profileImagesDirectory, {
+  dotfiles: 'deny',
+  fallthrough: true,
+  index: false,
+  maxAge: '1y',
+  immutable: true,
+  setHeaders: (res) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  },
+}));
+app.get('/', (req, res) => res.json({ name: 'EduTrack by Rootaccess API', status: 'ok' }));
 app.get('/api/health', (req, res) => res.json({
   success: true,
-  message: 'Student Performance API is healthy',
+  message: 'EduTrack by Rootaccess API is healthy',
   database: getDatabaseState(),
 }));
 app.use('/api/auth', authRoutes);

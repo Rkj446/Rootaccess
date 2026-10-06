@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AlertCircle, CheckCircle2, GraduationCap, KeyRound, Lock, Mail, Eye, EyeOff } from 'lucide-react';
+import { AlertCircle, CheckCircle2, KeyRound, Lock, Mail, Eye, EyeOff } from 'lucide-react';
 import api from '../services/api';
+import rootaccessLogo from '../assets/Rootaccess_logo.jpeg';
 
 const stages = {
   request: 'request',
@@ -226,9 +227,13 @@ export default function ForgotPassword() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-        <div className="flex items-center justify-center gap-3 mb-6">
-          <div className="bg-primary-100 p-3 rounded-xl">
-            <GraduationCap className="w-8 h-8 text-primary-600" />
+        <div className="mb-6 text-center">
+          <div className="mb-4 flex items-center justify-center gap-3">
+            <img src={rootaccessLogo} alt="Rootaccess logo" className="h-12 w-20 rounded-lg object-cover" />
+            <div className="text-left">
+              <p className="text-xl font-bold leading-tight text-gray-900">EduTrack</p>
+              <p className="text-xs text-gray-500">by Rootaccess</p>
+            </div>
           </div>
           <h1 className="text-2xl font-bold text-gray-900">Password Recovery</h1>
         </div>

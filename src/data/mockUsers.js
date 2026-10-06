@@ -1,3 +1,6 @@
+import studentAvatar from '../assets/avatars/student-default.svg';
+import teacherAvatar from '../assets/avatars/teacher-default.svg';
+
 export const mockUsers = [
   {
     id: 1,
@@ -5,7 +8,7 @@ export const mockUsers = [
     password: 'student123',
     name: 'Rahul Sharma',
     role: 'STUDENT',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Rahul',
+    avatar: studentAvatar,
   },
   {
     id: 2,
@@ -13,15 +16,7 @@ export const mockUsers = [
     password: 'teacher123',
     name: 'Dr. Priya Sharma',
     role: 'TEACHER',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Priya',
-  },
-  {
-    id: 3,
-    email: 'admin@example.com',
-    password: 'admin123',
-    name: 'Admin User',
-    role: 'ADMIN',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Admin',
+    avatar: teacherAvatar,
   },
 ];
 
